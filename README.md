@@ -40,7 +40,7 @@ player.add(delegate: self)
 
 ## Play a Stream
 
-The SDK also provide VideoView, a UIView subclass
+The SDK provide VideoView, a UIView subclass. And also provides SwiftUI View, you can refer to the example source code.
 
 ```swift
 
