@@ -8,12 +8,14 @@
 let package = Package(
   ...
   dependencies: [
+    //  Apple spm binaryTarget doesn't support dependencies params, need to add a WebRTC dependency here.
+    .package(name: "WebRTC", url: "https://github.com/webrtc-sdk/Specs.git", .exact("114.5735.05"),
     .package(name: "AuroraLivePlayerSDK", url: "https://github.com/visionular/auroralive-player-spec.git", .upToNextMajor("1.0.0")),
   ],
   targets: [
     .target(
       name: "MyApp",
-      dependencies: ["AuroraLivePlayerSDK"]
+      dependencies: ["WebRTC", "AuroraLivePlayerSDK"]
     )
   ]
 )
