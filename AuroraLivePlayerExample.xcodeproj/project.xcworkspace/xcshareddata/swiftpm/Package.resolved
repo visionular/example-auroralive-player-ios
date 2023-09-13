@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "auroralive-player-spec",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/visionular/auroralive-player-spec",
+      "state" : {
+        "revision" : "056b56738105d55da6a997c27137daa3c0fb9417",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "specs",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/webrtc-sdk/Specs",
+      "state" : {
+        "revision" : "ad0d300aee4fed80bd76551b76635542f2d1aac5",
+        "version" : "114.5735.5"
+      }
+    }
+  ],
+  "version" : 2
+}
