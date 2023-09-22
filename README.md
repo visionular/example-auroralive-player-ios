@@ -1,5 +1,9 @@
 # example-auroralive-player-ios
 
+## Docs
+
+Source Docs: https://docs.visionular.com/auroralive/playersdk/ios/
+
 ## Install SDK
 
 #### Swift Package
