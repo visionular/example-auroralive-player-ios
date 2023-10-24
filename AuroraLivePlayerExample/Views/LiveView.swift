@@ -165,6 +165,7 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
     func player(_ player: AuroraLivePlayer, didPlaySuccess streamInfo: StreamInfo) {
         Task.detached { @MainActor in
             toast("play success", .textColor(.white), .radiusSize(10), .backColor(.gray), .duration(2))
+            self.layers.removeAll()
             self.currentLayer = streamInfo.videoLayersInfo!.current
             streamInfo.videoLayersInfo!.layers.forEach { element in
                 self.layers.append(AuroraLiveLayer(desc: String(element.width)+"x"+String(element.height), value: element.rid))
