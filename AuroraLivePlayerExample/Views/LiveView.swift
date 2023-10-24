@@ -149,6 +149,7 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
     @Published var bitrate = 0
     @Published var width = 0
     @Published var height = 0
+    @Published var fps = 0.0
     @Published var layers: [AuroraLiveLayer] = []
     @Published var currentLayer = 0
     
@@ -165,6 +166,7 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
     func player(_ player: AuroraLivePlayer, didPlaySuccess streamInfo: StreamInfo) {
         Task.detached { @MainActor in
             toast("play success", .textColor(.white), .radiusSize(10), .backColor(.gray), .duration(2))
+            self.layers.removeAll()
             self.currentLayer = streamInfo.videoLayersInfo!.current
             streamInfo.videoLayersInfo!.layers.forEach { element in
                 self.layers.append(AuroraLiveLayer(desc: String(element.width)+"x"+String(element.height), value: element.rid))
@@ -180,6 +182,7 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
             self.bitrate = kbps
             self.width = stats.videoWidth
             self.height = stats.videoHeight
+            self.fps = stats.videoFps
         }
     }
     
@@ -244,6 +247,7 @@ struct LiveView: View {
                         }
                     }
                     Text(verbatim: "size: \(playerDelegateReceiver.width)x\(playerDelegateReceiver.height)").foregroundColor(.white)
+                    Text(verbatim: "fps: \(playerDelegateReceiver.fps)").foregroundColor(.white)
                     Text(verbatim: "pkt lost: \(playerDelegateReceiver.pktLost)").foregroundColor(.white)
                     Text(verbatim: "bitrate: \(playerDelegateReceiver.bitrate) kb/s").foregroundColor(.white)
                     
