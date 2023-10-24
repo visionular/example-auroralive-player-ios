@@ -149,6 +149,7 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
     @Published var bitrate = 0
     @Published var width = 0
     @Published var height = 0
+    @Published var fps = 0.0
     @Published var layers: [AuroraLiveLayer] = []
     @Published var currentLayer = 0
     
@@ -181,6 +182,7 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
             self.bitrate = kbps
             self.width = stats.videoWidth
             self.height = stats.videoHeight
+            self.fps = stats.videoFps
         }
     }
     
@@ -245,6 +247,7 @@ struct LiveView: View {
                         }
                     }
                     Text(verbatim: "size: \(playerDelegateReceiver.width)x\(playerDelegateReceiver.height)").foregroundColor(.white)
+                    Text(verbatim: "fps: \(playerDelegateReceiver.fps)").foregroundColor(.white)
                     Text(verbatim: "pkt lost: \(playerDelegateReceiver.pktLost)").foregroundColor(.white)
                     Text(verbatim: "bitrate: \(playerDelegateReceiver.bitrate) kb/s").foregroundColor(.white)
                     
