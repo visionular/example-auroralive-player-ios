@@ -12,7 +12,7 @@
 		0D7AE7352AB04AE900C6C366 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D7AE7342AB04AE900C6C366 /* Assets.xcassets */; };
 		0D7AE7382AB04AE900C6C366 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0D7AE7372AB04AE900C6C366 /* Preview Assets.xcassets */; };
 		0D7AE7432AB04C2200C6C366 /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7AE7422AB04C2200C6C366 /* LiveView.swift */; };
-		0DD311972AB1926500410DC1 /* AuroraLivePlayerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 0DD311962AB1926500410DC1 /* AuroraLivePlayerSDK */; };
+		0DA163EE2AE9495E00110629 /* AuroraLivePlayerSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 0DA163ED2AE9495E00110629 /* AuroraLivePlayerSDK */; };
 		0DD3119A2AB1928B00410DC1 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 0DD311992AB1928B00410DC1 /* WebRTC */; };
 /* End PBXBuildFile section */
 
@@ -31,7 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0DD311972AB1926500410DC1 /* AuroraLivePlayerSDK in Frameworks */,
+				0DA163EE2AE9495E00110629 /* AuroraLivePlayerSDK in Frameworks */,
 				0DD3119A2AB1928B00410DC1 /* WebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,8 +109,8 @@
 			);
 			name = AuroraLivePlayerExample;
 			packageProductDependencies = (
-				0DD311962AB1926500410DC1 /* AuroraLivePlayerSDK */,
 				0DD311992AB1928B00410DC1 /* WebRTC */,
+				0DA163ED2AE9495E00110629 /* AuroraLivePlayerSDK */,
 			);
 			productName = AuroraLivePlayerExample;
 			productReference = 0D7AE72D2AB04AE700C6C366 /* AuroraLivePlayerExample.app */;
@@ -141,8 +141,8 @@
 			);
 			mainGroup = 0D7AE7242AB04AE600C6C366;
 			packageReferences = (
-				0DD311952AB1926500410DC1 /* XCRemoteSwiftPackageReference "auroralive-player-spec" */,
 				0DD311982AB1928B00410DC1 /* XCRemoteSwiftPackageReference "Specs" */,
+				0DA163EC2AE9495E00110629 /* XCRemoteSwiftPackageReference "auroralive-player-spec" */,
 			);
 			productRefGroup = 0D7AE72E2AB04AE700C6C366 /* Products */;
 			projectDirPath = "";
@@ -385,12 +385,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0DD311952AB1926500410DC1 /* XCRemoteSwiftPackageReference "auroralive-player-spec" */ = {
+		0DA163EC2AE9495E00110629 /* XCRemoteSwiftPackageReference "auroralive-player-spec" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/visionular/auroralive-player-spec";
 			requirement = {
-				kind = exactVersion;
-				version = 1.0.1;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.2;
 			};
 		};
 		0DD311982AB1928B00410DC1 /* XCRemoteSwiftPackageReference "Specs" */ = {
@@ -404,9 +404,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0DD311962AB1926500410DC1 /* AuroraLivePlayerSDK */ = {
+		0DA163ED2AE9495E00110629 /* AuroraLivePlayerSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0DD311952AB1926500410DC1 /* XCRemoteSwiftPackageReference "auroralive-player-spec" */;
+			package = 0DA163EC2AE9495E00110629 /* XCRemoteSwiftPackageReference "auroralive-player-spec" */;
 			productName = AuroraLivePlayerSDK;
 		};
 		0DD311992AB1928B00410DC1 /* WebRTC */ = {
