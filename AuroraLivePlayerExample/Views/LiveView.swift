@@ -141,17 +141,46 @@ extension Binding {
     }
 }
 
+internal class VideoViewDelegateReceiver: VideoViewDelegate, ObservableObject {
+
+    @Published var isRendering: Bool = false
+    @Published var firstFrameTimestamp: Int = 0
+
+    init() {
+    }
+
+    public func videoView(_ videoView: VideoView, didUpdate isRendering: Bool) {
+        Task.detached { @MainActor in
+            self.isRendering = isRendering
+            if(isRendering == true && self.firstFrameTimestamp == 0){
+                self.firstFrameTimestamp = Int(1000 * Date().timeIntervalSince1970)
+            }
+        }
+    }
+}
+
 internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObject {
     @Published var loadError: Error? = nil
     @Published var layerError: Error? = nil
     var lastBytes = 0
-    @Published var pktLost = 0
+    @Published var videoPktLost = 0
+    @Published var audioPktLost = 0
     @Published var bitrate = 0
     @Published var width = 0
     @Published var height = 0
     @Published var fps = 0.0
+    @Published var lastPacketReceivedTimestamp: Int64 = 0
+    @Published var jitterBufferMs: Int = 0
+    @Published var keyFrameCount: Int = 0
+    @Published var pliCount: Int = 0
+    @Published var nackCount: Int = 0
+    @Published var freezeCount: Int = 0
+    @Published var freezeDuration: Double = 0.0
+    @Published var rtt : Double = 0.0
+    @Published var packets : Int = 0
     @Published var layers: [AuroraLiveLayer] = []
     @Published var currentLayer = 0
+    @Published var signalTimestamp: Int = 0
     
     init() {
     }
@@ -166,6 +195,7 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
     func player(_ player: AuroraLivePlayer, didPlaySuccess streamInfo: StreamInfo) {
         Task.detached { @MainActor in
             toast("play success", .textColor(.white), .radiusSize(10), .backColor(.gray), .duration(2))
+            self.signalTimestamp = Int(1000 * Date().timeIntervalSince1970)
             self.layers.removeAll()
             self.currentLayer = streamInfo.videoLayersInfo!.current
             streamInfo.videoLayersInfo!.layers.forEach { element in
@@ -178,11 +208,21 @@ internal class PlayerDelegateReceiver: AuroraLivePlayerDelegate, ObservableObjec
         let kbps = (stats.videoBytesReceived - lastBytes) * 8 / 1000
         lastBytes = stats.videoBytesReceived
         Task.detached { @MainActor in
-            self.pktLost = stats.videoPacketsLost
+            self.videoPktLost = stats.videoPacketsLost
+            self.audioPktLost = stats.audioPacketsLost
             self.bitrate = kbps
             self.width = stats.videoWidth
             self.height = stats.videoHeight
             self.fps = stats.videoFps
+            self.lastPacketReceivedTimestamp = stats.lastPacketReceivedTimestamp
+            self.jitterBufferMs = stats.jitterBufferMs
+            self.keyFrameCount = stats.keyFrameCount
+            self.nackCount = stats.nackCount
+            self.pliCount = stats.pliCount
+            self.freezeCount = stats.freezeCount
+            self.freezeDuration = stats.freezeDuration
+            self.rtt = stats.rtt
+            self.packets = stats.videoPacketsReceived + stats.audioPacketsReceived
         }
     }
     
@@ -206,23 +246,26 @@ struct LiveView: View {
     
     @ObservedObject var player: AuroraLivePlayer
     @ObservedObject var playerDelegateReceiver: PlayerDelegateReceiver
+    @ObservedObject var videoViewDelegateReceiver: VideoViewDelegateReceiver
     
     @State private var isRendering: Bool = false
     @State private var loaded: Bool = false
+    @State private var startPlayTime: Int = 0
     
+    let dateFormatter = DateFormatter()
     let playbackId: String
     let token: String
     
     let statTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
 
-    
     init(playbackId: String, token: String) {
         self.player = AuroraLivePlayer()
         self.playerDelegateReceiver = PlayerDelegateReceiver()
+        self.videoViewDelegateReceiver = VideoViewDelegateReceiver()
         self.playbackId = playbackId
         self.token = token
         self.player.add(delegate: playerDelegateReceiver)
+        self.dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
     }
     
     func layerChange(_ layer: Int) {
@@ -246,14 +289,28 @@ struct LiveView: View {
                             }
                         }
                     }
-                    Text(verbatim: "size: \(playerDelegateReceiver.width)x\(playerDelegateReceiver.height)").foregroundColor(.white)
-                    Text(verbatim: "fps: \(playerDelegateReceiver.fps)").foregroundColor(.white)
-                    Text(verbatim: "pkt lost: \(playerDelegateReceiver.pktLost)").foregroundColor(.white)
-                    Text(verbatim: "bitrate: \(playerDelegateReceiver.bitrate) kb/s").foregroundColor(.white)
-                    
+                    Group {
+                        Text(verbatim: "Clinet Time: \(dateFormatter.string(from: Date()))").foregroundColor(.white)
+                        Text(verbatim: "Resolution: \(playerDelegateReceiver.width)x\(playerDelegateReceiver.height)").foregroundColor(.white)
+                        Text(verbatim: "Signal Cost: \(playerDelegateReceiver.signalTimestamp > 0 ? (playerDelegateReceiver.signalTimestamp - startPlayTime):0) ms").foregroundColor(.white)
+                        Text(verbatim: "First Frame Render: \(videoViewDelegateReceiver.firstFrameTimestamp > 0 ? (videoViewDelegateReceiver.firstFrameTimestamp - startPlayTime):0) ms").foregroundColor(.white)
+                        Text(verbatim: "Fps: \(playerDelegateReceiver.fps)").foregroundColor(.white)
+                        Text(verbatim: "Bitrate: \(playerDelegateReceiver.bitrate) kbits/sec").foregroundColor(.white)
+                        Text(verbatim: "PTS: \(playerDelegateReceiver.lastPacketReceivedTimestamp)").foregroundColor(.white)
+                    }
+                    Group {
+                        Text(verbatim: "JB Ms: \(playerDelegateReceiver.jitterBufferMs) ms").foregroundColor(.white)
+                        Text(verbatim: "Keyframe: \(playerDelegateReceiver.keyFrameCount)").foregroundColor(.white)
+                        Text(verbatim: "PLI: \(playerDelegateReceiver.pliCount)").foregroundColor(.white)
+                        Text(verbatim: "NACK: \(playerDelegateReceiver.nackCount)").foregroundColor(.white)
+                        Text(verbatim: "Freeze: \(playerDelegateReceiver.freezeCount) \(playerDelegateReceiver.freezeDuration) s").foregroundColor(.white)
+                        Text(verbatim: "Packets: \(playerDelegateReceiver.packets)").foregroundColor(.white)
+                        Text(verbatim: "Packet Loss: A=\(playerDelegateReceiver.audioPktLost) V=\(playerDelegateReceiver.videoPktLost)").foregroundColor(.white)
+                        Text(verbatim: "RTT: \(playerDelegateReceiver.rtt) ms").foregroundColor(.white)
+                    }
                     ZStack(alignment: .bottom) {
                         if playerDelegateReceiver.loadError == nil {
-                            SwiftUIVideoView($player.videoTrack, isRendering: $isRendering, layoutMode: .fit, debug: true)
+                            SwiftUIVideoView($player.videoTrack, isRendering: $isRendering, layoutMode: .fit, debug: false, videoViewDelegate: videoViewDelegateReceiver)
                                 .onAppear {
                                     if playbackId.isEmpty {
                                         return
@@ -261,6 +318,7 @@ struct LiveView: View {
                                     
                                     if !loaded {
                                         loaded = true
+                                        startPlayTime = Int(1000 * Date().timeIntervalSince1970)
                                         player.play(playbackId: playbackId, token: token.isEmpty ? nil : token)
                                     }
                                 }
@@ -271,6 +329,7 @@ struct LiveView: View {
                                     }
                                     
                                     playerDelegateReceiver.loadError = nil
+                                    videoViewDelegateReceiver.firstFrameTimestamp = 0
                                 }
                             
                             if !isRendering {
