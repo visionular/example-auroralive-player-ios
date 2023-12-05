@@ -163,6 +163,21 @@ struct LiveView: View {
         player.layer(layer: playerDelegateReceiver.layers[layer])
     }
     
+    func getDuration(second: Int) -> String {
+        if(second < 60){
+            return "\(second) s"
+        }else if(second < 60*60){
+            return "\(second/60) min \(second%60) s"
+        }else if(second < 24*60*60){
+            return "\(second/3600) hour \((second%3600)/60) min \((second%3600)%60) s"
+        }else if(second < 240*60*60){
+            return "\(second/(24*3600)) day \((second%(24*3600))/3600) hour \((second%(24*3600))%3600/60) min \((second%(24*3600))%3600%60) s"
+        }
+        else{
+            return "> 10 day"
+        }
+    }
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .bottom) {
@@ -181,7 +196,7 @@ struct LiveView: View {
                         }
                     }
                     Group {
-                        Text(verbatim: "Clinet Time: \(dateFormatter.string(from: Date()))").foregroundColor(.white)
+                        Text(verbatim: "Clinet Time: \(dateFormatter.string(from: Date())) Duration: \(self.getDuration(second: (Int(1000 * Date().timeIntervalSince1970)-startPlayTime)/1000))").foregroundColor(.white)
                         Text(verbatim: "Resolution: \(playerDelegateReceiver.width)x\(playerDelegateReceiver.height)").foregroundColor(.white)
                         Text(verbatim: "Signal Cost: \(playerDelegateReceiver.signalTimestamp > 0 ? (playerDelegateReceiver.signalTimestamp - startPlayTime):0) ms").foregroundColor(.white)
                         Text(verbatim: "First Frame Render: \(videoViewDelegateReceiver.firstFrameTimestamp > 0 ? (videoViewDelegateReceiver.firstFrameTimestamp - startPlayTime):0) ms").foregroundColor(.white)

@@ -25,6 +25,7 @@
 		0D7AE7372AB04AE900C6C366 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0D7AE7422AB04C2200C6C366 /* LiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveView.swift; sourceTree = "<group>"; };
 		0DD3118E2AB163B600410DC1 /* AuroraLivePlayerSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AuroraLivePlayerSDK.xcframework; path = AuroraLivePlayerExample/Frameworks/AuroraLivePlayerSDK.xcframework; sourceTree = "<group>"; };
+		74D3126F2B1EC5D200612955 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +62,7 @@
 		0D7AE72F2AB04AE700C6C366 /* AuroraLivePlayerExample */ = {
 			isa = PBXGroup;
 			children = (
+				74D3126F2B1EC5D200612955 /* Info.plist */,
 				0D7AE7412AB04C0900C6C366 /* Views */,
 				0D7AE7302AB04AE700C6C366 /* AuroraLivePlayerExampleApp.swift */,
 				0D7AE7322AB04AE700C6C366 /* ContentView.swift */,
@@ -308,6 +310,7 @@
 				DEVELOPMENT_TEAM = 6B8U2593V3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AuroraLivePlayerExample/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -342,6 +345,7 @@
 				DEVELOPMENT_TEAM = 6B8U2593V3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AuroraLivePlayerExample/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
